@@ -1,0 +1,40 @@
+<?php
+/**
+  * Implement hook_schema()
+  */
+function mylogin_schema() {
+  $schema = array();
+  $schema['mylogin'] = array(
+    'description' => t('mylogin module table'),
+    'fields' => array(
+      'id' => array(
+        'description' => t('The unique Row ID'),
+        'type' => 'serial',
+		'unsigned' => TRUE,
+        'not null' => TRUE
+    ),
+      'login_destination' => array(
+        'description' => t('A field to hold a login destination url'),
+        'type' => 'text'
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+  return $schema;
+}
+/**
+  * Implement hook_enable()
+  */
+function mylogin_enable() {
+  //Check if table exists, if not install the schema.
+  if(db_table_exists('mylogin') == FALSE) {
+    drupal_install_schema('mylogin');
+  }
+}
+function mylogin_disable() {
+  //Check if table exists, if not install the schema.
+  if(db_table_exists('mylogin') == FALSE) {
+    drupal_uninstall_schema('mylogin');
+  }
+}
+?>

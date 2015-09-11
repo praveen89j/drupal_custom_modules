@@ -1,0 +1,6 @@
+name = custom_login
+description = "Custom login module redesigned module."
+core = 7.x
+version = "7.2x"
+core = "7.x"
+project = "custom_login"

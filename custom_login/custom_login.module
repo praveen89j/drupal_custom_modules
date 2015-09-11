@@ -1,0 +1,88 @@
+<?php
+/** 
+ * @file
+ * All functionality of custom login module.
+ */
+
+
+ /**
+ * Implements hook_block_info().
+ */
+function custom_login_block_info() {
+  $blocks = array();
+  $blocks['custom_login'] = array(
+    'info' => t('Custom login Block'),
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function custom_login_block_view($delta = '') {
+  $block = array();
+  global $user;
+  switch ($delta) {
+    case 'custom_login':
+      if (!$user->uid && !(arg(0) == 'user' && !is_numeric(arg(1)))) {
+        $block['content'] = drupal_get_form('custom_login_form');
+      }
+      break;
+  }
+
+  return $block;
+}
+/**
+ * mylogin menu calling the form.
+ */
+function custom_login_item_page() {
+  return drupal_get_form('custom_login_form');
+}
+/**
+ * mylogin module checking whether any data or present in table.
+ */
+function custom_login_form($form, &$form_state) {
+ 
+    $form['name'] = array(
+      '#title' => t('User Name'),
+      '#type' => 'textfield',
+      '#default_value' => '',
+       '#required' => TRUE,
+    );
+   $form['pass'] = array(
+      '#title' => t('Password'),
+      '#type' => 'password',
+      '#default_value' => '',
+	  '#required' => TRUE,
+    );
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Login'),
+    );
+    return $form;
+}
+
+function custom_login_validate_form($form, &$form_state) {
+  if (empty($form_state['values']['name'])) {
+    form_set_error('username', t('Please enter a username.'));
+  }
+}
+/**
+ * Submitting form and validating login.
+ */
+ 
+function custom_login_form_submit($form, &$form_state) {
+
+$username = trim($form_state['values']['name']);
+$password = trim($form_state['values']['pass']);
+  
+if ($uid = user_authenticate($username, $password)) {
+      global $user;
+      $user = user_load($uid);
+      $login_array = array ('name' => $username);
+      user_login_finalize($login_array);
+      drupal_goto('user');
+    }
+
+  
+}
